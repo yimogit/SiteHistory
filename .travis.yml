@@ -1,0 +1,35 @@
+language: csharp
+
+matrix:
+  include:
+    - os: linux # Ubuntu 14.04
+      dist: trusty
+      sudo: required
+      dotnet: 2.0.0
+
+## If `dotnet` configuration doesnt work, use install script instead
+# install:
+#  - export DOTNET_INSTALL_DIR="$PWD/.dotnetsdk"
+#  - curl -sSL https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/dotnet-install.sh | bash /dev/stdin --version "$CLI_VERSION" --install-dir "$DOTNET_INSTALL_DIR"
+#  - export PATH="$DOTNET_INSTALL_DIR:$PATH"  
+
+script:
+  - dotnet --info
+  - dotnet --version
+  - dotnet run http://www.youtube.com https://www.google.com
+  
+after_script:
+  - cd SaveImgs
+  - git init
+  - git config user.name "${U_NAME}"
+  - git config user.email "${U_EMAIL}"
+  - git add .
+  - git commit -m "down img"
+  - git remote add orginimgs "https://${GH_TOKEN}@${GH_REF}"
+  - export abc='date +%Y%m%d%H%M'
+  - echo "year:$($abc)"
+  - git push --force --quiet orginimgs master:${P_BRANCH}_$($abc)
+
+branches:
+  only:
+    - master
