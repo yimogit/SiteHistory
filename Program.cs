@@ -56,8 +56,8 @@ namespace SiteHistory
                         var savePath = $"{ saveDir }/{ saveName}";
                         System.Threading.Thread.Sleep(3000);
                         ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile(savePath, ScreenshotImageFormat.Jpeg);
-                        builder.AppendLine($"![图片](./{saveName})");
                         builder.AppendLine($"### {item.Key}");
+                        builder.AppendLine($"![{item.Key}](./{saveName})");
                         Console.WriteLine($"图片保存至：{savePath}");
                         driver.ExecuteScript("document.body.innerHTML=''");
                     }
