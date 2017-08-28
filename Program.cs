@@ -54,6 +54,7 @@ namespace SiteHistory
                         }
                         var saveName = $"{item.Key.Replace(".", "_").Replace("http://", "").Replace("https://", "").Replace("/", "")}.jpg";
                         var savePath = $"{ saveDir }/{ saveName}";
+                        System.Threading.Thread.Sleep(3000);
                         ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile(savePath, ScreenshotImageFormat.Jpeg);
                         builder.AppendLine($"![图片](./{saveName})");
                         builder.AppendLine($"### {item.Key}");
