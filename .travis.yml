@@ -1,11 +1,7 @@
 language: csharp
-
-matrix:
-  include:
-    - os: linux # Ubuntu 14.04
-      dist: trusty
-      sudo: required
-      dotnet: 2.0.0
+mono: none
+dist: trusty
+dotnet: 2.0.0
 
 ## If `dotnet` configuration doesnt work, use install script instead
 # install:
@@ -16,10 +12,16 @@ matrix:
 script:
   - dotnet --info
   - dotnet --version
-  - dotnet run https://www.youtube.com https://www.google.com https://www.taobao.com/ https://www.jd.com/ https://www.bilibili.com/
+  - dotnet restore
+  - dotnet run ip http://1212.ip138.com/ic.asp png 
+  - dotnet run acfun http://www.acfun.cn/ jpg 20
+  - dotnet run bilibili https://www.bilibili.com jpg 20
+  - dotnet run youtube https://www.youtube.com jpg 20
+  - dotnet run google https://www.google.com
+  
   
 after_script:
-  - cd SaveImgs
+  - cd download
   - git init
   - git config user.name "${U_NAME}"
   - git config user.email "${U_EMAIL}"

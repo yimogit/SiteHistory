@@ -10,73 +10,104 @@ namespace SiteHistory
 {
     class Program
     {
-
-        static Dictionary<string, string> pagesConfig = new Dictionary<string, string>() { };
-        static Program()
-        {
-            // pagesConfig.Add("youtube", "http://www.youtube.com/");
-            // pagesConfig.Add("google", "https://www.google.com");
-        }
+        /// <summary>
+        /// 运行 dotnet run 名称[必传] 网址[必传] 图片格式[jpg/png] 等待截图时间[默认为10，单位 秒] 保存目录[可选参数]
+        /// </summary>
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
-            //获取传入参数 dotnet run https://www.baidu.com https://github.com/
-            for (int i = 0; i < args.Length; i++)
+            if (args.Length < 2 || args[1].IndexOf("http") != 0)
             {
-                pagesConfig.Add(args[i], args[i]);
-            }
-            if (pagesConfig.Count == 0)
-            {
+                Console.WriteLine("请传入网站名称及其页面地址 例如： dotnet run baidu https://www.baidu.com");
                 return;
             }
-            //windows 需要将phantomjs.exe所在目录设置环境变量 或者 指定目录驱动目录
-            //Linux 需要安装PhantomJS
-            using (var driver = new PhantomJSDriver())
+            try
             {
-                //const int timeout= 60;
-                driver.Manage().Window.Maximize();
-                //driver.Manage().Timeouts().PageLoad = new TimeSpan(0, 0, timeout);
-                var saveDir = $"SaveImgs";
-                StringBuilder builder = new StringBuilder();
-                foreach (var item in pagesConfig)
-                {
-                    try
-                    {
-                        Console.WriteLine($"开始前往[{item.Value}]");
-                        driver.Navigate().GoToUrl(item.Value);
-                        if (string.IsNullOrEmpty(driver.Title))
-                        {
-                            Console.WriteLine($"[{item.Key}]打开失败");
-                            return;
-                        }
-                        if (!Directory.Exists(saveDir))
-                        {
-                            Directory.CreateDirectory(saveDir);
-                        }
-                        driver.Navigate().GoToUrl(item.Value);
-                        var saveName = $"{item.Key.Replace(".", "_").Replace("http://", "").Replace("https://", "").Replace("/", "")}.jpg";
-                        var savePath = $"{ saveDir }/{ saveName}";
-                        driver.ExecuteScript("window.scroll(0,document.body.scrollHeight/4)");
-                        System.Threading.Thread.Sleep(1000);
-                        driver.ExecuteScript("window.scroll(0,document.body.scrollHeight/2)");
-                        System.Threading.Thread.Sleep(1000);
-                        driver.ExecuteScript("window.scroll(0,document.body.scrollHeight)");
-                        System.Threading.Thread.Sleep(10000);
-                        ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile(savePath, ScreenshotImageFormat.Jpeg);
-                        builder.AppendLine($"### {item.Key}");
-                        builder.AppendLine($"![{item.Key}](./{saveName})");
-                        Console.WriteLine($"图片保存至：{savePath}");
-                        driver.ExecuteScript("document.body.innerHTML=''");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"[{item.Key}]异常：{ex.Message}");
-                    }
-                }
-                //创建MD文件
-                WriteFile($"{saveDir}/README.MD", builder.ToString());
+                //windows 需要将phantomjs.exe所在目录设置环境变量 或者 指定目录驱动目录
+                //Linux 需要安装PhantomJS
+                IWebDriver driver = new PhantomJSDriver();
+                BeginTask(driver, args);
                 driver.Quit();
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"异常信息：{ex.Message}");
+                Console.WriteLine($"堆栈信息：{ex.StackTrace}");
+            }
         }
+        static void BeginTask(IWebDriver driver, string[] args)
+        {
+            string siteName = args[0], sitePage = args[1], imgExt = "jpg", saveDirName = "download";
+            int waitTime = 10;
+            string appendjs = "";
+            if (args.Length > 2 && !string.IsNullOrEmpty(args[2]))
+            {
+                imgExt = args[2];
+            }
+            if (args.Length > 3 && !string.IsNullOrEmpty(args[3]))
+            {
+                if(!int.TryParse(args[3], out waitTime))
+                {
+                    saveDirName= args[3];
+                }
+            }
+            if (args.Length > 4 && !string.IsNullOrEmpty(args[4]))
+            {
+                saveDirName = args[4];
+            }
+            if (args.Length > 5 && !string.IsNullOrEmpty(args[5]))
+            {
+                appendjs = args[5];
+            }
+
+            StringBuilder builder = new StringBuilder();
+            StringBuilder builderHtml = new StringBuilder();
+            Console.WriteLine($"开始打开[{sitePage}]");
+            driver.Manage().Window.Maximize();
+            driver.Navigate().GoToUrl(sitePage);
+            string siteTitle = driver.Title;
+            if (string.IsNullOrEmpty(siteTitle))
+            {
+                Console.WriteLine($"[{siteName}]打开失败");
+                return;
+            }
+            ((IJavaScriptExecutor)driver).ExecuteScript(appendjs);
+            //分阶段滚动到底部
+            var myScript = @"var ymtimer=setInterval(function(){
+                                if (document.body.scrollHeight - 700 < document.body.scrollTop){
+                                    window.scroll(0, document.body.scrollHeight)
+                                        clearInterval(ymtimer);
+                                    return;
+                                }
+                                window.scroll(0, document.body.scrollTop + 700)
+
+                    }," + waitTime * 1000 / 10 + ");";
+            //滚动到最底部再截图，触发图片懒加载
+            ((IJavaScriptExecutor)driver).ExecuteScript(myScript);
+            
+            System.Threading.Thread.Sleep(1200 * waitTime);
+            if (!Directory.Exists(saveDirName))
+            {
+                Directory.CreateDirectory(saveDirName);
+            }
+            string saveName = $"{siteName}.{imgExt}";
+            //截图保存
+            ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile($"{ saveDirName }/{ saveName}", (imgExt == "jpg" ? ScreenshotImageFormat.Jpeg : ScreenshotImageFormat.Png));
+            Console.WriteLine($"保存图片成功");
+            //构造Readme.md
+            builder.AppendLine($"### {siteName}");
+            builder.AppendLine($"> 网站标题： {siteTitle}");
+            builder.AppendLine($"![{siteName}](./{saveName})");
+            //构造index.html
+            builderHtml.AppendLine($"<a href='{sitePage}' title='{siteName}-{sitePage}'>{siteTitle}</a>");
+            builderHtml.AppendLine($"<a href='{sitePage}' title='{siteName}-{sitePage}'><img src='./{saveName}' style='width:100%;'/></a>");
+
+            //创建MD文件
+            WriteFile($"{saveDirName}/index.html", builderHtml.ToString());
+            WriteFile($"{saveDirName}/README.MD", builder.ToString());
+
+        }
+
         static void WriteFile(string fileName, string input)
         {
             if (string.IsNullOrEmpty(input))
