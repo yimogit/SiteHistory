@@ -1,7 +1,11 @@
+# 使用测试框架即可使用phantomjs
 language: csharp
-mono: none
-dist: trusty
-dotnet: 2.0.0
+matrix:
+  include:
+    - os: linux # Ubuntu 14.04
+      dist: trusty
+      sudo: required
+      dotnet: 2.0.0
 
 ## If `dotnet` configuration doesnt work, use install script instead
 # install:
@@ -10,6 +14,7 @@ dotnet: 2.0.0
 #  - export PATH="$DOTNET_INSTALL_DIR:$PATH"  
 
 script:
+  - phantomjs -v
   - dotnet --info
   - dotnet --version
   - dotnet restore
