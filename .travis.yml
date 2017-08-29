@@ -28,6 +28,7 @@ after_script:
   - git remote add orginimgs "https://${GH_TOKEN}@${GH_REF}"
   - export abc='date +%Y%m%d'
   - echo "year:$($abc)"
+  - git push --force --quiet orginimgs master:${P_BRANCH}
   - git push --force --quiet orginimgs master:${P_BRANCH}_$($abc)
 
 branches:
