@@ -16,7 +16,7 @@ matrix:
 script:
   - dotnet --info
   - dotnet --version
-  - dotnet run http://www.youtube.com https://www.google.com http://www.toutiao.com/
+  - dotnet run https://www.youtube.com https://www.google.com https://www.taobao.com/ https://www.jd.com/ https://www.bilibili.com/
   
 after_script:
   - cd SaveImgs
