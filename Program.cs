@@ -52,6 +52,7 @@ namespace SiteHistory
                         {
                             Directory.CreateDirectory(saveDir);
                         }
+                        driver.Navigate().GoToUrl(item.Value);
                         var saveName = $"{item.Key.Replace(".", "_").Replace("http://", "").Replace("https://", "").Replace("/", "")}.jpg";
                         var savePath = $"{ saveDir }/{ saveName}";
                         driver.ExecuteScript("window.scroll(0,document.body.scrollHeight/4)");
