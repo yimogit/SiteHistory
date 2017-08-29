@@ -32,9 +32,9 @@ namespace SiteHistory
             //Linux 需要安装PhantomJS
             using (var driver = new PhantomJSDriver())
             {
-                const int timeout= 60;
+                //const int timeout= 60;
                 driver.Manage().Window.Maximize();
-                driver.Manage().Timeouts().PageLoad = new TimeSpan(0, 0, timeout);
+                //driver.Manage().Timeouts().PageLoad = new TimeSpan(0, 0, timeout);
                 var saveDir = $"SaveImgs";
                 StringBuilder builder = new StringBuilder();
                 foreach (var item in pagesConfig)
@@ -54,6 +54,11 @@ namespace SiteHistory
                         }
                         var saveName = $"{item.Key.Replace(".", "_").Replace("http://", "").Replace("https://", "").Replace("/", "")}.jpg";
                         var savePath = $"{ saveDir }/{ saveName}";
+                        driver.ExecuteScript("window.scroll(0,document.body.scrollHeight/4)");
+                        System.Threading.Thread.Sleep(1000);
+                        driver.ExecuteScript("window.scroll(0,document.body.scrollHeight/2)");
+                        System.Threading.Thread.Sleep(1000);
+                        driver.ExecuteScript("window.scroll(0,document.body.scrollHeight)");
                         System.Threading.Thread.Sleep(10000);
                         ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile(savePath, ScreenshotImageFormat.Jpeg);
                         builder.AppendLine($"### {item.Key}");
