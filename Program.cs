@@ -11,14 +11,16 @@ namespace SiteHistory
     class Program
     {
         /// <summary>
-        /// 运行 dotnet run 名称[必传] 网址[必传] 图片格式[jpg/png] 等待截图时间[默认为10，单位 秒] 保存目录[可选参数]
+        /// 运行 dotnet run 名称[必传] 网址[必传] 图片格式[jpg/png] 等待截图时间[默认为10，单位 秒] 保存目录[可选参数] 脚本[可选]
         /// </summary>
         /// <param name="args"></param>
         static void Main(string[] args)
         {
+            //判断是否传入名称及链接
             if (args.Length < 2 || args[1].IndexOf("http") != 0)
             {
                 Console.WriteLine("请传入网站名称及其页面地址 例如： dotnet run baidu https://www.baidu.com");
+                Environment.Exit(0);
                 return;
             }
             try
@@ -35,6 +37,15 @@ namespace SiteHistory
                 Console.WriteLine($"堆栈信息：{ex.StackTrace}");
             }
         }
+        /// <summary>
+        /// 执行任务
+        /// </summary>
+        /// <param name="driver"></param>
+        /// <param name="args"></param>
+        /// <remarks>
+        /// 截图
+        /// 将图片插入Readme.md,index.html中，以供预览
+        /// </remarks>
         static void BeginTask(IWebDriver driver, string[] args)
         {
             string siteName = args[0], sitePage = args[1], imgExt = "jpg", saveDirName = "download",appendjs = "";
@@ -63,15 +74,15 @@ namespace SiteHistory
             if (!string.IsNullOrEmpty(appendjs))
                 ((IJavaScriptExecutor)driver).ExecuteScript(appendjs);
             //分阶段滚动到底部
-            var myScript = @"var ymtimer=setInterval(function(){
-                                if (document.body.scrollHeight - 700 < document.body.scrollTop){
-                                    window.scroll(0, document.body.scrollHeight)
-                                        clearInterval(ymtimer);
-                                    return;
-                                }
-                                window.scroll(0, document.body.scrollTop + 700)
-
-                    }," + waitTime * 1000 / 10 + ");";
+            var myScript = 
+@"var ymtimer=setInterval(function(){
+    if (document.body.scrollHeight - 700 < document.body.scrollTop){
+        window.scroll(0, document.body.scrollHeight)
+        clearInterval(ymtimer);
+        return;
+    }
+    window.scroll(0, document.body.scrollTop + 700)
+}," + waitTime * 1000 / 10 + ");";
             //滚动到最底部再截图，触发图片懒加载
             ((IJavaScriptExecutor)driver).ExecuteScript(myScript);
             
@@ -88,13 +99,11 @@ namespace SiteHistory
             //构造index.html
             builderHtml.AppendLine($"<a href='{sitePage}' title='{siteName}-{sitePage}'>{siteTitle}</a>");
             builderHtml.AppendLine($"<a href='{sitePage}' title='{siteName}-{sitePage}'><img src='./{saveName}' style='width:100%;'/></a>");
-
             //创建MD文件
             WriteFile($"{saveDirName}/index.html", builderHtml.ToString());
             WriteFile($"{saveDirName}/README.MD", builder.ToString());
 
         }
-
         static void WriteFile(string fileName, string input)
         {
             if (string.IsNullOrEmpty(input))

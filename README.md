@@ -27,6 +27,32 @@
 	4. `dotnet run baidu https://www.baidu.com/ jpg 10 download-test "alert('233')"`
 		> 加载完毕后执行一段js
 
+## 项目构建思路
+
+0. 运行程序，传入名称 网址 如：`dotnet run baidu https://www.baidu.com`
+1. 创建一个phanomjs无头浏览器: `IWebDriver driver = new PhantomJSDriver();`
+2. 在浏览器中打开传入网站:`driver.Navigate().GoToUrl(sitePage);`
+3. 执行js使其滚动到底部，触发懒加载，等待网页图片加载
+  ``` js
+    int waitTime=10;
+    var myScript = @"var ymtimer=setInterval(function(){
+                        if (document.body.scrollHeight - 700 < document.body.scrollTop){
+                            window.scroll(0, document.body.scrollHeight)
+                            clearInterval(ymtimer);
+                            return;
+                        }
+                        window.scroll(0, document.body.scrollTop + 700)
+                    } ," + waitTime * 1000 / 10 + ");";
+    //10s中从头部滚动到底部
+    ((IJavaScriptExecutor)driver).ExecuteScript(myScript);
+    //等待滚动完毕，图片也差不多能加载完闭
+    System.Threading.Thread.Sleep(1200 * waitTime);
+  ```
+4. 开始截图:`((ITakesScreenshot)driver).GetScreenshot().SaveAsFile("baidu.com",ScreenshotImageFormat.Jpeg)`
+5. 拼接文本写入Readme.MD,Index.html
+6. 关闭无头浏览器,程序结束`driver.Quit()`
+
+
 ## `.travis.yml`配置说明
 
 ```
@@ -35,8 +61,8 @@
 language: csharp
 dist: trusty
 dotnet: 2.0.0
-phantomjs: 2.1.0
 
+# mono:latest Travis CI默认会安装mono，测试发现若不安装mono,Travis CI会在程序截图时报错
 # 打印组件版本
 before_install:
   - dotnet --version
@@ -50,7 +76,10 @@ script:
   - dotnet run youtube https://www.youtube.com jpg 20
   - dotnet run google https://www.google.com
   
-# 将截图提交到 ${P_BRANCH} 设定的分支中(gh-pages) 
+# 将截图提交到 ${P_BRANCH} 分支中(gh-pages) 
+# export abc='date +%Y%m%d' 获取年月日
+# 脚本将根据时间创建新分支 `gh-pages_20170901`，并更新gh-pages分支
+#
 after_script:
   - cd download
   - git init
@@ -59,16 +88,24 @@ after_script:
   - git add .
   - git commit -m "add imgs"
   - git remote add orginimgs "https://${GH_TOKEN}@${GH_REF}"
-  - export abc='date +%Y%m%d'
-  - echo "year:$($abc)"
-  - git push --force --quiet orginimgs master:${P_BRANCH}
-  - git push --force --quiet orginimgs master:${P_BRANCH}_$($abc)
+  - export current_date='date +%Y%m%d'
+  - echo "current_date:$($current_date)"
+  - git push --force --quiet orginimgs master:gh-pages
+  - git push --force --quiet orginimgs master:gh-pages_$($current_date)
 
 branches:
   only:
     - master
 
 ```
+## 总结
+1. 测试发现IP地址每次都会发生变化,引发无限遐想~
+2. Linux下获取年月日字符串
+	设置：`export current_date='date +%Y%m%d'`
+	输出：`echo "current_date:$($current_date)"`
+3. `.net core`使用`Selenium`需要引入Nuget包为：`CoreCompat.Selenium.WebDriver` 
 
+
+> 配置中的变量按照[此文章](http://www.cnblogs.com/morang/p/7228488.html)配置即可
 > 亲测搭配[travis-ci](https://travis-ci.org/)食用最佳，Fork之后，前往travis-ci配置即可 [参阅文章:使用travis-ci自动部署github上的项目](http://www.cnblogs.com/morang/p/7228488.html)     
-> 欢迎Fork，Star，欢迎分享值得记录的网站。
+> 欢迎分享值得记录的网站。
