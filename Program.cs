@@ -37,29 +37,18 @@ namespace SiteHistory
         }
         static void BeginTask(IWebDriver driver, string[] args)
         {
-            string siteName = args[0], sitePage = args[1], imgExt = "jpg", saveDirName = "download";
+            string siteName = args[0], sitePage = args[1], imgExt = "jpg", saveDirName = "download",appendjs = "";
             int waitTime = 10;
-            string appendjs = "";
             if (args.Length > 2 && !string.IsNullOrEmpty(args[2]))
-            {
                 imgExt = args[2];
-            }
             if (args.Length > 3 && !string.IsNullOrEmpty(args[3]))
-            {
-                if(!int.TryParse(args[3], out waitTime))
-                {
-                    saveDirName= args[3];
-                }
-            }
+                int.TryParse(args[3], out waitTime)
             if (args.Length > 4 && !string.IsNullOrEmpty(args[4]))
-            {
                 saveDirName = args[4];
-            }
             if (args.Length > 5 && !string.IsNullOrEmpty(args[5]))
-            {
                 appendjs = args[5];
-            }
-
+            if (!Directory.Exists(saveDirName))
+                Directory.CreateDirectory(saveDirName);
             StringBuilder builder = new StringBuilder();
             StringBuilder builderHtml = new StringBuilder();
             Console.WriteLine($"开始打开[{sitePage}]");
@@ -87,10 +76,6 @@ namespace SiteHistory
             ((IJavaScriptExecutor)driver).ExecuteScript(myScript);
             
             System.Threading.Thread.Sleep(1200 * waitTime);
-            if (!Directory.Exists(saveDirName))
-            {
-                Directory.CreateDirectory(saveDirName);
-            }
             string saveName = $"{siteName}.{imgExt}";
             //截图保存
             ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile($"{ saveDirName }/{ saveName}", (imgExt == "jpg" ? ScreenshotImageFormat.Jpeg : ScreenshotImageFormat.Png));
