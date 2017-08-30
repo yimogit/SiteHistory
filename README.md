@@ -32,12 +32,10 @@
 # 语言为scharp,系统为ubuntu14.04(代号trusty),.netcore 版本2.0
 # 使用测试框架即可使用phantomjs
 language: csharp
-matrix:
-  include:
-    - os: linux # Ubuntu 14.04
-      dist: trusty
-      sudo: required
-      dotnet: 2.0.0
+dist: trusty
+mono: none
+dotnet: 2.0.0
+sudo: required
 
 ## 若无需要的组件，可以在此install节点安装
 # install:

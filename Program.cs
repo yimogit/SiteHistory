@@ -42,7 +42,7 @@ namespace SiteHistory
             if (args.Length > 2 && !string.IsNullOrEmpty(args[2]))
                 imgExt = args[2];
             if (args.Length > 3 && !string.IsNullOrEmpty(args[3]))
-                int.TryParse(args[3], out waitTime)
+                int.TryParse(args[3], out waitTime);
             if (args.Length > 4 && !string.IsNullOrEmpty(args[4]))
                 saveDirName = args[4];
             if (args.Length > 5 && !string.IsNullOrEmpty(args[5]))
