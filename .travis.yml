@@ -1,15 +1,15 @@
 # csharp+phangomjs
 language: csharp
 dist: trusty
+mono: none
 dotnet: 2.0.0
 sudo: required
-cache:
-  directories:
-    - "travis_phantomjs"
+
 before_install:
-  - phantomjs --version
   - dotnet --info
   - dotnet --version
+  - phantomjs --version
+  
 script:
   - dotnet restore
   - dotnet run ip http://1212.ip138.com/ic.asp png 
@@ -19,8 +19,6 @@ script:
   - dotnet run google https://www.google.com
     
 after_script:
-  - folder="download"
-  - if [ ! -x "$folder"]; then  mkdir "$folder" fi
   - cd download
   - git init
   - git config user.name "${U_NAME}"
