@@ -71,7 +71,7 @@ namespace SiteHistory
                 Console.WriteLine($"[{siteName}]打开失败");
                 return;
             }
-            if (string.IsNullOrEmpty(appendjs))
+            if (!string.IsNullOrEmpty(appendjs))
                 ((IJavaScriptExecutor)driver).ExecuteScript(appendjs);
             //分阶段滚动到底部
             var myScript = @"var ymtimer=setInterval(function(){
