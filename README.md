@@ -26,27 +26,23 @@
 		> 下载的图片保存到download-test文件夹下
 	4. `dotnet run baidu https://www.baidu.com/ jpg 10 download-test "alert('233')"`
 		> 加载完毕后执行一段js
+
 ## `.travis.yml`配置说明
 
 ```
 # 语言为scharp,系统为ubuntu14.04(代号trusty),.netcore 版本2.0
-# 使用测试框架即可使用phantomjs
+# Travis CI提供 phantomjs预装
 language: csharp
 dist: trusty
-mono: none
 dotnet: 2.0.0
-sudo: required
+phantomjs: 2.1.0
 
-## 若无需要的组件，可以在此install节点安装
-# install:
-#  - export DOTNET_INSTALL_DIR="$PWD/.dotnetsdk"
-#  - curl -sSL https://raw.githubusercontent.com/dotnet/cli/rel/2.0.0/scripts/obtain/dotnet-install.sh | bash /dev/stdin --version "$CLI_VERSION" --install-dir "$DOTNET_INSTALL_DIR"
-#  - export PATH="$DOTNET_INSTALL_DIR:$PATH"
-
-# 检查dotnet信息，还原依赖包,运行任务
-script:
-  - dotnet --info
+# 打印组件版本
+before_install:
   - dotnet --version
+  - phantomjs --version
+
+script:
   - dotnet restore
   - dotnet run ip http://1212.ip138.com/ic.asp png 
   - dotnet run acfun http://www.acfun.cn/ jpg 20

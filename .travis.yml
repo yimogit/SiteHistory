@@ -2,9 +2,9 @@
 language: csharp
 dist: trusty
 dotnet: 2.0.0
+phantomjs: 2.1.0
 
 before_install:
-  - dotnet --info
   - dotnet --version
   - phantomjs --version
   
