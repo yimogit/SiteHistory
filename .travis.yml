@@ -2,33 +2,22 @@
 language: csharp
 dist: trusty
 dotnet: 2.0.0
-sudo: false
+sudo: required
 cache:
   directories:
     - "travis_phantomjs"
-## If `dotnet` configuration doesnt work, use install script instead
-# install:
-#  - export DOTNET_INSTALL_DIR="$PWD/.dotnetsdk"
-#  - curl -sSL https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/dotnet-install.sh | bash /dev/stdin --version "$CLI_VERSION" --install-dir "$DOTNET_INSTALL_DIR"
-#  - export PATH="$DOTNET_INSTALL_DIR:$PATH"  
-
 before_install:
-  - "phantomjs --version"
-  - "export PATH=$PWD/travis_phantomjs/phantomjs-2.1.1-linux-x86_64/bin:$PATH"
-  - "hash -d phantomjs || true"
-  - "phantomjs --version"
-  
-script:
+  - phantomjs --version
   - dotnet --info
   - dotnet --version
+script:
   - dotnet restore
   - dotnet run ip http://1212.ip138.com/ic.asp png 
   - dotnet run acfun http://www.acfun.cn/ jpg 20
   - dotnet run bilibili https://www.bilibili.com jpg 20
   - dotnet run youtube https://www.youtube.com jpg 20
   - dotnet run google https://www.google.com
-  
-  
+    
 after_script:
   - folder="download"
   - if [ ! -x "$folder"]; then  mkdir "$folder" fi
