@@ -78,6 +78,7 @@ namespace SiteHistory
             System.Threading.Thread.Sleep(1200 * waitTime);
             string saveName = $"{siteName}.{imgExt}";
             //截图保存
+            Console.WriteLine($"网站标题：{siteTitle}");
             ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile($"{ saveDirName }/{ saveName}", (imgExt == "jpg" ? ScreenshotImageFormat.Jpeg : ScreenshotImageFormat.Png));
             Console.WriteLine($"保存图片成功");
             //构造Readme.md
