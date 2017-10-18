@@ -10,7 +10,7 @@ before_install:
   
 script:
   - dotnet restore
-  - dotnet run ip http://1212.ip138.com/ic.asp png 
+  - dotnet run ip http://2017.ip138.com/ic.asp png 
   - dotnet run acfun http://www.acfun.cn/ jpg 20
   - dotnet run bilibili https://www.bilibili.com jpg 20
   - dotnet run youtube https://www.youtube.com jpg 20
