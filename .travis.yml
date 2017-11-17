@@ -15,6 +15,7 @@ script:
   - dotnet run bilibili https://www.bilibili.com jpg 20
   - dotnet run youtube https://www.youtube.com jpg 20
   - dotnet run google https://www.google.com
+  - dotnet run doodles https://www.google.com/doodles/
     
 after_script:
   - cd download
