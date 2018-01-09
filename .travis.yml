@@ -14,8 +14,7 @@ script:
   - dotnet run acfun http://www.acfun.cn/ jpg 20
   - dotnet run bilibili https://www.bilibili.com jpg 20
   - dotnet run youtube https://www.youtube.com jpg 20
-  - dotnet run google https://www.google.com
-  - dotnet run doodles https://www.google.com/doodles?hl=zh-CN#archive
+  - dotnet run google https://www.google.com 20
     
 after_script:
   - cd download
