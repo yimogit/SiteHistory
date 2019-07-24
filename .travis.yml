@@ -11,6 +11,8 @@ before_install:
 script:
   - dotnet restore
   - dotnet run ip http://myip.ipip.net/ png 30
+  - dotnet run github-trending https://github.com/trending 60
+  - dotnet run github-developers https://github.com/trending/developers 60
   - dotnet run acfun http://www.acfun.cn/ jpg 60
   - dotnet run bilibili https://www.bilibili.com jpg 60
   - dotnet run youtube https://www.youtube.com jpg 60
