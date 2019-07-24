@@ -11,17 +11,17 @@ before_install:
 script:
   - dotnet restore
   - dotnet run ip http://myip.ipip.net/ png 30
-  - dotnet run github-trending https://github.com/trending 60
-  - dotnet run github-developers https://github.com/trending/developers 60
-  - dotnet run acfun http://www.acfun.cn/ jpg 60
-  - dotnet run bilibili https://www.bilibili.com jpg 60
-  - dotnet run youtube https://www.youtube.com jpg 60
-  - dotnet run google https://www.google.com 60
-  - dotnet run juejin https://juejin.im 60
-  - dotnet run juejin-pins https://juejin.im/pins 60
-  - dotnet run sina https://www.sina.com.cn/ 60
-  - dotnet run weibo https://weibo.com/ 60
-  - dotnet run hao123 https://www.hao123.com/ 60
+  - dotnet run github-trending https://github.com/trending jpg 120
+  - dotnet run github-developers https://github.com/trending/developers jpg 120
+  - dotnet run acfun http://www.acfun.cn/ jpg 300
+  - dotnet run bilibili https://www.bilibili.com jpg 300
+  - dotnet run youtube https://www.youtube.com jpg 300
+  - dotnet run google https://www.google.com jpg 300
+  - dotnet run juejin https://juejin.im jpg 300
+  - dotnet run juejin-pins https://juejin.im/pins jpg 300
+  - dotnet run sina https://www.sina.com.cn/ jpg 300
+  - dotnet run weibo https://weibo.com/ jpg 300
+  - dotnet run hao123 https://www.hao123.com/ jpg 300
     
 after_script:
   - cd download
