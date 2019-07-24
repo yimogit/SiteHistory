@@ -82,11 +82,11 @@ namespace SiteHistory
         return;
     }
     window.scroll(0, document.body.scrollTop + 700)
-}," + waitTime * 1000 / 10 + ");";
+}," + 60 * 1000 / 10 + ");";
             //滚动到最底部再截图，触发图片懒加载
             ((IJavaScriptExecutor)driver).ExecuteScript(myScript);
             
-            System.Threading.Thread.Sleep(1200 * waitTime);
+            System.Threading.Thread.Sleep(1000 * waitTime);
             string saveName = $"{siteName}.{imgExt}";
             //截图保存
             Console.WriteLine($"网站标题：{siteTitle}");
