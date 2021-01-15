@@ -14,6 +14,9 @@ script:
   - dotnet run bilibili https://www.bilibili.com jpg 60
   - dotnet run youtube https://www.youtube.com jpg 60
   - dotnet run google https://www.google.com jpg 60
+  - dotnet run bilibili-liudao https://space.bilibili.com/295723/video jpg 60
+  - dotnet run bilibili-tuanzi https://space.bilibili.com/593614/video jpg 60
+  - dotnet run bilibili-hxm https://space.bilibili.com/642922/video jpg 60
     
 after_script:
   - cd download
